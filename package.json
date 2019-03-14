@@ -1,0 +1,30 @@
+{
+  "name": "gulper",
+  "version": "1.4.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-clean-css": "^3.10.0",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-util": "^3.0.8",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "run-sequence": "^2.2.1",
+    "webpack": "^4.29.6",
+    "webpack-dev-server": "^3.2.1",
+    "webpack-merge-and-include-globally": "^2.1.16"
+  },
+  "dependencies": {
+    "gulp-imagemin": "^5.0.3",
+    "gulp-uglify": "^3.0.2",
+    "gulp-util": "^3.0.8",
+    "imagemin-guetzli": "^2.0.0",
+    "yargs": "^10.1.2"
+  }
+}

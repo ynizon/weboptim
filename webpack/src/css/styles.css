@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "launchkit-fonts";
+  src:url("../fonts/launchkit-fonts.eot");
+  src:url("../fonts/launchkit-fonts.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/launchkit-fonts.woff") format("woff"),
+    url("../fonts/launchkit-fonts.ttf") format("truetype"),
+    url("../fonts/launchkit-fonts.svg#launchkit-fonts") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}

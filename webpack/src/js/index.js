@@ -1,0 +1,3 @@
+function coco(){
+	alert('ok');
+}

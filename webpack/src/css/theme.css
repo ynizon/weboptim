@@ -1,0 +1,15 @@
+/* Elements de base*/
+@media screen and (max-width: 2000px) and (min-width: 1800px){
+	.containerbig {
+		max-width: 1900px;
+	}	
+}
+
+hr{
+	width:100%;
+	page-break-after: always;
+}
+.table td, .table th {
+	padding:0.3rem;
+	border:0;
+}
