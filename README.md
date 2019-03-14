@@ -1,8 +1,4 @@
-<p align="center"><a href="https://www.gameandme.fr/weboptim/" target="_blank"><img width="400" src="https://s3.amazonaws.com/thecontrolgroup/voyager.png"></a></p>
-
-<p align="center">
-<a href="https://packagist.org/packages/tcg/voyager"><img src="https://poser.pugx.org/tcg/voyager/v/stable.svg?format=flat" alt="Latest Stable Version"></a>
-</p>
+<p align="center"><a href="https://www.gameandme.fr/weboptim/" target="_blank"><img width="400" src="https://www.gameandme.fr/weboptim/weboptim.png"></a></p>
 
 # **W**eboptim - The Tool for optimization
 Made by [Yohann Nizon](ynizon@gmail.com)
