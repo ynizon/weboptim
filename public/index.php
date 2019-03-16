@@ -196,7 +196,7 @@ if (isset($_GET["remove"])){
 						</table>	
 						<br/>
 						Ces résultats sont des pistes de réflexion. Il se peut que le code source ai mal été intérprété par l'outil, et que le site ne s'affiche pas à 100% comme il devrait.
-						<br/><a href='#' id="url_serveur" target="_blank">Voir le code optimisé.</a><br/>
+						<br/><a href='#' id="url_serveur" target="_blank">Voir le code optimisé</a> / <a href='#' id="url_serveur-nowebpack" target="_blank">(sans webpack).</a><br/>
 						<a id="remove_url_serveur" href='#'>Cliquez ici pour forcer un recalcul.</a>
 					</div>
 				</div>
@@ -236,6 +236,7 @@ if (isset($_GET["remove"])){
 				$("#note_desktop").html("");
 				$("#note_desktop_optim").html("");
 				$("#url_serveur").attr("href","#");
+				$("#url_serveur-nowebpack").attr("href","#");
 				$("#remove_url_serveur").attr("href","#");
 				
 				$("#step").html('');
@@ -289,6 +290,7 @@ if (isset($_GET["remove"])){
 						$("#note_desktop").html(tabData.scores.desktop);
 						$("#note_desktop_optim").html(tabData.scores.desktop_optim);
 						$("#url_serveur").attr('href','<?php echo getenv("APP_URL");?>/'+tabData.scores.url_serveur);
+						$("#url_serveur-nowebpack").attr('href','<?php echo getenv("APP_URL");?>/'+tabData.scores.url_serveur+'/index-nowebpack.html');
 						$("#remove_url_serveur").attr("href",'<?php echo getenv("APP_URL");?>?url='+tabData.scores.url+'&remove='+tabData.scores.url_serveur);
 						$("#result").show();
 						$('#info').css('display','none');

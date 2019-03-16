@@ -218,11 +218,15 @@ class Dumper
 							if (substr($true_url,0,1) == "/"){
 								$true_url = $protocol .$domain.$true_url;
 							}
-							
-							$tabJs[] = $this->directory."/js/".$file;
-							if (!file_exists($this->directory."/js/".$file)){
-								file_put_contents($this->directory."/js/".$file,$oHelper->getContent($true_url));
-							}
+
+							//No serviceworker js file
+                            $sContentJs = $oHelper->getContent($true_url);
+                            if (stripos($sContentJs, "serviceworker") === false) {
+                                $tabJs[] = $this->directory."/js/".$file;
+                                if (!file_exists($this->directory."/js/".$file)){
+                                    file_put_contents($this->directory."/js/".$file,$sContentJs);
+                                }
+                            }
 						}
 					}
 				}
