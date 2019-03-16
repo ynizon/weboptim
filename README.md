@@ -1,10 +1,10 @@
-<p align="center"><a href="https://www.gameandme.fr/creation-web/weboptim/" target="_blank"><img width="400" src="https://www.gameandme.fr/weboptim/weboptim.png"></a></p>
+<p align="center"><a href="https://www.gameandme.fr/creation-web/weboptim/" target="_blank"><img width="400" src="https://www.gameandme.fr/wp-content/uploads/2019/03/screenshot_1.png"></a></p>
 
 # **W**eboptim - The Tool for optimization
 Made by [Yohann Nizon](ynizon@gmail.com)
 
-![Weboptim Screenshot](https://github.com/ynizon/weboptim/tree/master/public/images/screenshot_1.png)
-![Weboptim Screenshot](https://github.com/ynizon/weboptim/tree/master/public/images/screenshot_2.png)
+![Weboptim Screenshot](https://www.gameandme.fr/wp-content/uploads/2019/03/screenshot_1.png)
+![Weboptim Screenshot](https://www.gameandme.fr/wp-content/uploads/2019/03/screenshot_2.png)
 
 Website & Documentation: https://www.gameandme.fr/creation-web/weboptim/
 
