@@ -1,17 +1,18 @@
 <?php
-use voku\helper\UTF8;
+
 use voku\helper\SelectorConverter;
 use voku\helper\SimpleHtmlDom;
 use voku\helper\SimpleHtmlDomNode;
 use voku\helper\SimpleHtmlDomNodeBlank;
 use voku\helper\SimpleHtmlDomNodeInterface;
+use voku\helper\UTF8;
 
 /**
  * Override of the original package HTMLDomParser
  * Its the same code, but one function is different: createDOMDocument
  * If the website has <head id="..."> , <head> is not detected
  * THis function is not protected but private :(
- * so i have fix it in this class
+ * so i have fix it in this class.
  *
  * @property-read string outerText <p>Get dom node's outer html (alias for "outerHtml").</p>
  * @property-read string outerHtml <p>Get dom node's outer html.</p>
@@ -27,8 +28,9 @@ use voku\helper\SimpleHtmlDomNodeInterface;
  * @method static HtmlDomParser file_get_html() file_get_html($html, $libXMLExtraOptions = null) <p>Load HTML from file.</p>
  * @method static HtmlDomParser str_get_html() str_get_html($html, $libXMLExtraOptions = null) <p>Load HTML from string.</p>
  */
-class MyHtmlDomParser {
-	     /**
+class MyHTMLDomParser
+{
+    /**
      * @var array
      */
     protected static $functionAliases = [
@@ -122,7 +124,7 @@ class MyHtmlDomParser {
     protected $keepBrokenHtml;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \DOMNode|SimpleHtmlDom|string $element HTML code or SimpleHtmlDom, \DOMNode
      *
@@ -147,7 +149,7 @@ class MyHtmlDomParser {
             $domNode = $this->document->importNode($element, true);
 
             if ($domNode instanceof \DOMNode) {
-                /** @noinspection UnusedFunctionResultInspection */
+                /* @noinspection UnusedFunctionResultInspection */
                 $this->document->appendChild($domNode);
             }
 
@@ -155,7 +157,7 @@ class MyHtmlDomParser {
         }
 
         if ($element !== null) {
-            /** @noinspection UnusedFunctionResultInspection */
+            /* @noinspection UnusedFunctionResultInspection */
             $this->loadHtml($element);
         }
     }
@@ -174,7 +176,7 @@ class MyHtmlDomParser {
             return \call_user_func_array([$this, self::$functionAliases[$name]], $arguments);
         }
 
-        throw new \BadMethodCallException('Method does not exist: ' . $name);
+        throw new \BadMethodCallException('Method does not exist: '.$name);
     }
 
     /**
@@ -230,8 +232,6 @@ class MyHtmlDomParser {
             case 'plaintext':
                 return $this->text();
         }
-
-        return null;
     }
 
     /**
@@ -254,7 +254,7 @@ class MyHtmlDomParser {
     }
 
     /**
-     * does nothing (only for api-compatibility-reasons)
+     * does nothing (only for api-compatibility-reasons).
      *
      * @deprecated
      *
@@ -325,14 +325,14 @@ class MyHtmlDomParser {
                 self::$domReplaceHelper['orig']
             );
 
-            $DOM_REPLACE__HELPER_CACHE['tmp']['html_wrapper__start'] = '<' . self::$domHtmlWrapperHelper . '>';
-            $DOM_REPLACE__HELPER_CACHE['tmp']['html_wrapper__end'] = '</' . self::$domHtmlWrapperHelper . '>';
+            $DOM_REPLACE__HELPER_CACHE['tmp']['html_wrapper__start'] = '<'.self::$domHtmlWrapperHelper.'>';
+            $DOM_REPLACE__HELPER_CACHE['tmp']['html_wrapper__end'] = '</'.self::$domHtmlWrapperHelper.'>';
 
             $DOM_REPLACE__HELPER_CACHE['orig']['html_wrapper__start'] = '';
             $DOM_REPLACE__HELPER_CACHE['orig']['html_wrapper__end'] = '';
 
-            $DOM_REPLACE__HELPER_CACHE['tmp']['html_special_script__start'] = '<' . self::$domHtmlSpecialScriptHelper;
-            $DOM_REPLACE__HELPER_CACHE['tmp']['html_special_script__end'] = '</' . self::$domHtmlSpecialScriptHelper . '>';
+            $DOM_REPLACE__HELPER_CACHE['tmp']['html_special_script__start'] = '<'.self::$domHtmlSpecialScriptHelper;
+            $DOM_REPLACE__HELPER_CACHE['tmp']['html_special_script__end'] = '</'.self::$domHtmlSpecialScriptHelper.'>';
 
             $DOM_REPLACE__HELPER_CACHE['orig']['html_special_script__start'] = '<script';
             $DOM_REPLACE__HELPER_CACHE['orig']['html_special_script__end'] = '</script>';
@@ -373,10 +373,10 @@ class MyHtmlDomParser {
             $this->isDOMDocumentCreatedWithoutHtmlWrapper = true;
         }
 
-        /** @noinspection HtmlRequiredTitleElement */
-		/////////////////////////////////////////////////////////////////////////////
-		// FIX FOR SOME WEBSITES
-		/////////////////////////////////////////////////////////////////////////////
+        /* @noinspection HtmlRequiredTitleElement */
+        /////////////////////////////////////////////////////////////////////////////
+        // FIX FOR SOME WEBSITES
+        /////////////////////////////////////////////////////////////////////////////
         if (\strpos($html, '<head') === false and \strpos($html, '<header') !== false) {
             $this->isDOMDocumentCreatedWithoutHeadWrapper = true;
         }
@@ -431,7 +431,7 @@ class MyHtmlDomParser {
             ||
             $this->keepBrokenHtml
         ) {
-            $html = '<' . self::$domHtmlWrapperHelper . '>' . $html . '</' . self::$domHtmlWrapperHelper . '>';
+            $html = '<'.self::$domHtmlWrapperHelper.'>'.$html.'</'.self::$domHtmlWrapperHelper.'>';
         }
 
         $html = self::replaceToPreserveHtmlEntities($html);
@@ -445,7 +445,7 @@ class MyHtmlDomParser {
             $xmlHackUsed = false;
             if (\stripos('<?xml', $html) !== 0) {
                 $xmlHackUsed = true;
-                $html = '<?xml encoding="' . $this->getEncoding() . '" ?>' . $html;
+                $html = '<?xml encoding="'.$this->getEncoding().'" ?>'.$html;
             }
 
             $this->document->loadHTML($html, $optionsXml);
@@ -454,7 +454,7 @@ class MyHtmlDomParser {
             if ($xmlHackUsed) {
                 foreach ($this->document->childNodes as $child) {
                     if ($child->nodeType === \XML_PI_NODE) {
-                        /** @noinspection UnusedFunctionResultInspection */
+                        /* @noinspection UnusedFunctionResultInspection */
                         $this->document->removeChild($child);
 
                         break;
@@ -473,9 +473,9 @@ class MyHtmlDomParser {
 
         return $this->document;
     }
-	
+
     /**
-     * workaround for bug: https://bugs.php.net/bug.php?id=74628
+     * workaround for bug: https://bugs.php.net/bug.php?id=74628.
      *
      * @param string $html
      */
@@ -484,7 +484,7 @@ class MyHtmlDomParser {
         // regEx for e.g.: [<script id="elements-image-2">...<script>]
         $regExSpecialScript = '/<(script)(?<attr>[^>]*)>(?<content>.*)<\/\1>/isU';
         $html = \preg_replace_callback($regExSpecialScript, function ($scripts) {
-            return '<script' . $scripts['attr'] . '>' . \str_replace('</', '<\/', $scripts['content']) . '</script>';
+            return '<script'.$scripts['attr'].'>'.\str_replace('</', '<\/', $scripts['content']).'</script>';
         }, $html);
     }
 
@@ -500,9 +500,8 @@ class MyHtmlDomParser {
 
         if (isset($specialScripts[0])) {
             foreach ($specialScripts[0] as $specialScript) {
-
-                $specialNonScript = '<' . self::$domHtmlSpecialScriptHelper . \substr($specialScript, \strlen('<script'));
-                $specialNonScript = \substr($specialNonScript, 0, -\strlen('</script>')) . '</' . self::$domHtmlSpecialScriptHelper . '>';
+                $specialNonScript = '<'.self::$domHtmlSpecialScriptHelper.\substr($specialScript, \strlen('<script'));
+                $specialNonScript = \substr($specialNonScript, 0, -\strlen('</script>')).'</'.self::$domHtmlSpecialScriptHelper.'>';
                 // remove the html5 fallback
                 $specialNonScript = \str_replace('<\/', '</', $specialNonScript);
 
@@ -524,10 +523,10 @@ class MyHtmlDomParser {
             $html = (string) \preg_replace_callback(
                 '/(?<start>.*)<(?<element_start>[a-z]+)(?<element_start_addon> [^>]*)?>(?<value>.*?)<\/(?<element_end>\2)>(?<end>.*)/sui',
                 function ($matches) {
-                    return $matches['start'] .
-                           '°lt_simple_html_dom__voku_°' . $matches['element_start'] . $matches['element_start_addon'] . '°gt_simple_html_dom__voku_°' .
-                           $matches['value'] .
-                           '°lt/_simple_html_dom__voku_°' . $matches['element_end'] . '°gt_simple_html_dom__voku_°' .
+                    return $matches['start'].
+                           '°lt_simple_html_dom__voku_°'.$matches['element_start'].$matches['element_start_addon'].'°gt_simple_html_dom__voku_°'.
+                           $matches['value'].
+                           '°lt/_simple_html_dom__voku_°'.$matches['element_end'].'°gt_simple_html_dom__voku_°'.
                            $matches['end'];
                 },
                 $html
@@ -547,9 +546,9 @@ class MyHtmlDomParser {
                     );
 
                     self::$domBrokenReplaceHelper['orig'][] = $matches['broken'];
-                    self::$domBrokenReplaceHelper['tmp'][] = $matchesHash = '____simple_html_dom__voku__broken_html____' . \crc32($matches['broken']);
+                    self::$domBrokenReplaceHelper['tmp'][] = $matchesHash = '____simple_html_dom__voku__broken_html____'.\crc32($matches['broken']);
 
-                    return $matches['start'] . $matchesHash . $matches['end'];
+                    return $matches['start'].$matchesHash.$matches['end'];
                 },
                 $html
             );

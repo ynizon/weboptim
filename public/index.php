@@ -1,5 +1,5 @@
 <?php
-include_once("config.php");
+include_once 'config.php';
 
 /*
 //TEST: TO REMOVE
@@ -21,45 +21,44 @@ exit();
 */
 
 //Init folder fot the website
-if (!is_dir($sDir)){
-	mkdir($sDir);
+if (!is_dir($sDir)) {
+    mkdir($sDir);
 }
 
 //If we need to remove folder; we change the date
 $folders = scandir($sDir);
-if (isset($_GET["remove"])){
-	$sDirRemove = trim($_GET["remove"]);
-	foreach ($folders as $folder){
-		if ($folder != "." and $folder != ".." ){
-			if ($sDir."/".$folder == $sDirRemove ){
-				file_put_contents($sDir."/".$folder."/date.txt","2001-01-01");
-			}
-		}
-	}
+if (isset($_GET['remove'])) {
+    $sDirRemove = trim($_GET['remove']);
+    foreach ($folders as $folder) {
+        if ($folder != '.' and $folder != '..') {
+            if ($sDir.'/'.$folder == $sDirRemove) {
+                file_put_contents($sDir.'/'.$folder.'/date.txt', '2001-01-01');
+            }
+        }
+    }
 }
 
 //Remove older folders
 $oHelper = new Helper();
-foreach ($folders as $folder){
-	if ($folder != "." and $folder != ".." ){
-		if (is_dir($sDir."/".$folder)){
-			$sDate = "2001-01-01";
-			if (file_exists($sDir."/".$folder."/date.txt")){
-				$sDate = file_get_contents($sDir."/".$folder."/date.txt");
-			}
-			if ($sDate < date("Y-m")){
-				$oHelper->deleteDir($sDir."/".$folder);
-			}
-		}
-	}
+foreach ($folders as $folder) {
+    if ($folder != '.' and $folder != '..') {
+        if (is_dir($sDir.'/'.$folder)) {
+            $sDate = '2001-01-01';
+            if (file_exists($sDir.'/'.$folder.'/date.txt')) {
+                $sDate = file_get_contents($sDir.'/'.$folder.'/date.txt');
+            }
+            if ($sDate < date('Y-m')) {
+                $oHelper->deleteDir($sDir.'/'.$folder);
+            }
+        }
+    }
 }
 
 //Redirect after removing
-if (isset($_GET["remove"])){
-	header("location: index.php?url=".$_GET["url"]);
-	exit();
+if (isset($_GET['remove'])) {
+    header('location: index.php?url='.$_GET['url']);
+    exit();
 }
-
 
 ?>
 
@@ -74,7 +73,7 @@ if (isset($_GET["remove"])){
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title><?php echo getenv("APP_NAME");?></title>
+  <title><?php echo getenv('APP_NAME'); ?></title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -97,7 +96,7 @@ if (isset($_GET["remove"])){
     <div class="container">
       <div class="row">
         <div class="col-xl-9 mx-auto">
-          <h1 class="mb-5"><?php echo getenv("APP_NAME");?></h1>
+          <h1 class="mb-5"><?php echo getenv('APP_NAME'); ?></h1>
         </div>		
 		<div class="col-md-10 col-lg-8 col-xl-7 mx-auto">          
 			<div class="form-row">
@@ -138,13 +137,13 @@ if (isset($_GET["remove"])){
 					<li><a href='https://www.npmjs.com/package/gulp-imagemin' target="_blank">gulp-imagemin</a></li>
 					<li><a href='https://www.npmjs.com/package/imagemin-guetzli' target="_blank">imagemin-guetzli</a></li>
 					<?php
-					/*					
-						<li><a href='https://www.npmjs.com/package/gulp-imagemin' target="_blank">gulp-imagemin</a></li>
-						<li><a href='https://www.npmjs.com/package/gulp-clean-css' target="_blank">gulp-clean-css</a></li>
-						<li><a href='https://www.npmjs.com/package/gulp-htmlmin' target="_blank">gulp-htmlmin</a></li>
-						<li><a href='https://www.npmjs.com/package/gulp-uglify' target="_blank">gulp-uglify</a></li>
-					*/
-					?>
+                    /*
+                        <li><a href='https://www.npmjs.com/package/gulp-imagemin' target="_blank">gulp-imagemin</a></li>
+                        <li><a href='https://www.npmjs.com/package/gulp-clean-css' target="_blank">gulp-clean-css</a></li>
+                        <li><a href='https://www.npmjs.com/package/gulp-htmlmin' target="_blank">gulp-htmlmin</a></li>
+                        <li><a href='https://www.npmjs.com/package/gulp-uglify' target="_blank">gulp-uglify</a></li>
+                    */
+                    ?>
 				</ul>
 			</div>
           </div>
@@ -249,7 +248,7 @@ if (isset($_GET["remove"])){
 					$.ajax({
 						type: "POST",
 						timeout: 600000,
-						url: '<?php echo getenv("APP_URL");?>/getressources.php',
+						url: '<?php echo getenv('APP_URL'); ?>/getressources.php',
 						data: 'url='+$("#url").val(),
 						success: function (data) {
 							$("#step").html('<li class="list-group-item list-group-item-warning">Récupération des ressources terminée, optimisation en cours...</li>');
@@ -263,7 +262,7 @@ if (isset($_GET["remove"])){
 		function refreshInfo(){
 			$.ajax({
 				type: "POST",
-				url: '<?php echo getenv("APP_URL");?>/getressources.php',
+				url: '<?php echo getenv('APP_URL'); ?>/getressources.php',
 				data: 'url='+$("#url").val(),
 				success: function (data) {	
 					var tabData = JSON.parse(data);
@@ -289,9 +288,9 @@ if (isset($_GET["remove"])){
 						$("#note_mobile_optim").html(tabData.scores.mobile_optim);
 						$("#note_desktop").html(tabData.scores.desktop);
 						$("#note_desktop_optim").html(tabData.scores.desktop_optim);
-						$("#url_serveur").attr('href','<?php echo getenv("APP_URL");?>/'+tabData.scores.url_serveur);
-						$("#url_serveur-nowebpack").attr('href','<?php echo getenv("APP_URL");?>/'+tabData.scores.url_serveur+'/index-nowebpack.html');
-						$("#remove_url_serveur").attr("href",'<?php echo getenv("APP_URL");?>?url='+tabData.scores.url+'&remove='+tabData.scores.url_serveur);
+						$("#url_serveur").attr('href','<?php echo getenv('APP_URL'); ?>/'+tabData.scores.url_serveur);
+						$("#url_serveur-nowebpack").attr('href','<?php echo getenv('APP_URL'); ?>/'+tabData.scores.url_serveur+'/index-nowebpack.html');
+						$("#remove_url_serveur").attr("href",'<?php echo getenv('APP_URL'); ?>?url='+tabData.scores.url+'&remove='+tabData.scores.url_serveur);
 						$("#result").show();
 						$('#info').css('display','none');
 						$("#mybtn").show();
@@ -301,13 +300,13 @@ if (isset($_GET["remove"])){
 		}
 		
 		<?php
-		if (isset($_GET["url"])){
-			?>
-			$("#url").val('<?php echo $_GET["url"];?>');
+        if (isset($_GET['url'])) {
+            ?>
+			$("#url").val('<?php echo $_GET['url']; ?>');
 			initUrl();
 			<?php
-		}
-		?>
+        }
+        ?>
 	</script>
 </body>
 
