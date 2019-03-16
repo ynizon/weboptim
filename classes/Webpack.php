@@ -1,45 +1,55 @@
 <?php
-class Webpack{
+
+/**
+ * Class Webpack
+ * Tools for launching webpack and make config
+ */
+class Webpack
+{
 	
-	private $dir = "";
+	private $directory = "";
 	public $error = false;
-	
+
+    /**
+     * Webpack constructor.
+     * @param $sDir (directory of the project)
+     */
 	public function __construct($sDir){
-		$this->dir = $sDir;
+		$this->directory = $sDir;
 	}
 	
 	/** Creation of the webpack.config.json file */
 	public function createConfig(){		
-		copy("../webpack/index.js",$this->dir."/index.js");
-		copy("../webpack/package.json",$this->dir."/package.json");
-		$json = json_decode(file_get_contents ($this->dir."/ressources.txt"),true);
-		$sJS = "";
-		$files = $json["js"];
-		foreach ($files as $file){
-			$sJS .= "path.resolve(__dirname, 'js/".basename($file)."'),\n";
+		copy("../webpack/index.js",$this->directory."/index.js");
+		copy("../webpack/package.json",$this->directory."/package.json");
+		$json_content = json_decode(file_get_contents ($this->directory."/ressources.txt"),true);
+		$list_js = "";
+		$files = $json_content["js"];
+		foreach ($files as $the_file){
+			$list_js .= "path.resolve(__dirname, 'js/".basename($the_file)."'),\n";
 		}
 
-		$sCSS = "";
-		$files = $json["css"];
-		foreach ($files as $file){
-			$sCSS .= "path.resolve(__dirname, 'css/".basename($file)."'),\n";
+		$list_css = "";
+		$files = $json_content["css"];
+		foreach ($files as $the_file){
+			$list_css .= "path.resolve(__dirname, 'css/".basename($the_file)."'),\n";
 		}
 
-		$fp = fopen($this->dir ."/webpack.config.js","w+");
+		$fp = fopen($this->directory ."/webpack.config.js","w+");
 		$s = file_get_contents("../webpack/webpack.config.js");
-		$s = str_replace("//@@CSS@@",$sCSS,$s);
-		$s = str_replace("//@@JS@@",$sJS,$s);
+		$s = str_replace("//@@CSS@@",$list_css,$s);
+		$s = str_replace("//@@JS@@",$list_js,$s);
 		fputs($fp, $s);
 		fclose($fp);
 	}
 	
 	/** Execute webpack */
 	public function launch(){		
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		fputs($fp,"----Webpack execute:  ".date("Y-m-d H:i:s")."\n");
 		fclose($fp);
 		
-		$sDir = __DIR__."/../public/".$this->dir;
+		$sDir = __DIR__."/../public/".$this->directory;
 		$cmd = "webpack --context ".$sDir." --config=".$sDir."/webpack.config.js";
 		//echo $cmd;
 		$shell = shell_exec($cmd);
@@ -50,7 +60,7 @@ class Webpack{
 			$this->error = false;
 		}		
 		
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		fputs($fp,"----Webpack execute: OK ".date("Y-m-d H:i:s")."\n");
 		fclose($fp);
 	}
@@ -64,7 +74,7 @@ class Webpack{
 		//Backup the older (for debug)
 		if (getenv("APP_DEBUG") == "true"){
 			$s = $dom->outertext;		
-			file_put_contents($this->dir."/index-nowebpack.html", $s);
+			file_put_contents($this->directory."/index-nowebpack.html", $s);
 		}
 		
 		//Remove JS
@@ -104,15 +114,15 @@ class Webpack{
 		//Remove scripts empty
 		$s = str_ireplace('<script type="text/javascript"></script>','',$s);
 		
-		file_put_contents($this->dir."/index.html", $s);
+		file_put_contents($this->directory."/index.html", $s);
 	}
 	
 	/** Launch Gulp to optimize all pictures */
 	public function launchGulp($tabRessources){
 		$iNbTask = 0;
-		$sDir = $this->dir;
+		$sDir = $this->directory;
 		if (getenv("OPTIM_PICTURE_WITH_GULP") == "true"){
-			$fp = fopen($this->dir."/log.txt","a+");
+			$fp = fopen($this->directory."/log.txt","a+");
 			fputs($fp,"----Gulp execute:  ".date("Y-m-d H:i:s")."\n");
 			fclose($fp);
 			foreach ($tabRessources as $task=>$tabFiles){
@@ -153,11 +163,10 @@ class Webpack{
 			}
 			@rmdir($sDir."/temp");
 			
-			$fp = fopen($this->dir."/log.txt","a+");
+			$fp = fopen($this->directory."/log.txt","a+");
 			fputs($fp,"----Gulp execute: OK ".date("Y-m-d H:i:s")."\n");
 			fclose($fp);
 		}
 		return $iNbTask;
 	}
 }
-?>

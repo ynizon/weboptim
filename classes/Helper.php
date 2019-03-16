@@ -1,6 +1,11 @@
 <?php
 
-class Helper{
+/**
+ * Class Helper
+ * Tools for different things
+ */
+class Helper
+{
 	/**
 	@function calc_size 
 	@param text dir rép dont on veut connaitre la taille
@@ -201,4 +206,3 @@ class Helper{
 	}
 }
 
-?>

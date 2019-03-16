@@ -1,5 +1,4 @@
 <?php
-use voku\helper;
 use voku\helper\UTF8;
 use voku\helper\SelectorConverter;
 use voku\helper\SimpleHtmlDom;
@@ -7,18 +6,13 @@ use voku\helper\SimpleHtmlDomNode;
 use voku\helper\SimpleHtmlDomNodeBlank;
 use voku\helper\SimpleHtmlDomNodeInterface;
 
-
-
-
-//FIX AND OVERRIDE createDOMDocument for some <head id="..."> websites
-//Just for one line ->function createDOMDocument is not protected but private :(
-
-
-
-
-
-
 /**
+ * Override of the original package HTMLDomParser
+ * Its the same code, but one function is different: createDOMDocument
+ * If the website has <head id="..."> , <head> is not detected
+ * THis function is not protected but private :(
+ * so i have fix it in this class
+ *
  * @property-read string outerText <p>Get dom node's outer html (alias for "outerHtml").</p>
  * @property-read string outerHtml <p>Get dom node's outer html.</p>
  * @property-read string innerText <p>Get dom node's inner html (alias for "innerHtml").</p>

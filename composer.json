@@ -1,10 +1,13 @@
 {
-    "require": {
-        "vlucas/phpdotenv": "^3.3",
-        "voku/simple_html_dom": "^4.3",
-        "voku/portable-utf8": "^5.4"
-    },
-	"dependencies": {
+  "require":
+  {
+     "vlucas/phpdotenv": "^3.3",
+     "voku/simple_html_dom": "^4.3",
+     "voku/portable-utf8": "^5.4",
+     "ext-json": "*"
+  }
+  ,
+  "dependencies": {
         "@fortawesome/fontawesome-free": "5.7.2",
         "bootstrap": "4.3.1",
         "jquery": "3.3.1",

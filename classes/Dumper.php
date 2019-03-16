@@ -1,17 +1,28 @@
 <?php
-class Dumper{
+
+/**
+ * Class Dumper
+ * Some tools for dump resources : css, js...
+ */
+class Dumper
+{
 	
-	private $dir = "";
+	private $directory = "";
 	private $dom ;
-	
+
+    /**
+     * Dumper constructor.
+     * @param $sDir (directory of the project)
+     * @param $dom (MyHtmlDomParser of the website)
+     */
 	public function __construct($sDir, $dom){
-		$this->dir = $sDir;
+		$this->directory = $sDir;
 		$this->dom = $dom;
 	}
 	
 	public function dumpImages($sFormat="",$protocol, $domain, &$sContent){
 		$oHelper = new Helper();
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		$dom = $this->dom;
 		$tabImages = array();
 		$tabReplace = array();
@@ -59,7 +70,7 @@ class Dumper{
 									
 									//On ne remplace lurl de la ressource qu une fois
 									if (!in_array($res_url, $tabReplace)){
-										$sContent = str_replace($res_url,getenv("APP_URL")."/".$this->dir."/images/".$file,$sContent);
+										$sContent = str_replace($res_url,getenv("APP_URL")."/".$this->directory."/images/".$file,$sContent);
 										$tabReplace[]= $res_url;
 									}
 								
@@ -67,10 +78,10 @@ class Dumper{
 										$res_url = $protocol .$domain.$res_url;
 									}
 									
-									$tabImages[] = $this->dir."/images/".$file;
+									$tabImages[] = $this->directory."/images/".$file;
 
-									if (!file_exists($this->dir."/images/".$file)){
-										file_put_contents($this->dir."/images/".$file,$oHelper->getContent($res_url));						
+									if (!file_exists($this->directory."/images/".$file)){
+										file_put_contents($this->directory."/images/".$file,$oHelper->getContent($res_url));
 									}
 								}
 							}
@@ -87,7 +98,7 @@ class Dumper{
 	public function dumpCss($protocol, $domain, &$sContent, $url){
 		//On recopie tous les css du site dans css (sans sous repertoire pour l optimisation)				
 		$oHelper = new Helper();
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		$dom = $this->dom;
 		$tabCss = array();
 		$tabReplace = array();
@@ -112,7 +123,7 @@ class Dumper{
 								$file = substr($file,0,$pos);
 							}
 							
-							if (!file_exists($this->dir."/css/".$file)){
+							if (!file_exists($this->directory."/css/".$file)){
 								
 								//Remplacement du lien
 								$pos = strpos($res_url,"?");
@@ -126,7 +137,7 @@ class Dumper{
 
 								//On ne remplace lurl de la ressource qu une fois
 								if (!in_array($res_url, $tabReplace)){
-									$sContent = str_replace($res_url,getenv("APP_URL")."/".$this->dir."/css/".$file,$sContent);
+									$sContent = str_replace($res_url,getenv("APP_URL")."/".$this->directory."/css/".$file,$sContent);
 									$tabReplace[]= $res_url;
 									//echo "<br/>".$res_url."->".getenv("APP_URL")."/".$sDir."/css/".$file;
 								}
@@ -141,11 +152,11 @@ class Dumper{
 								//$tabRessourcesCSS = array();
 								
 								//Recupere les ressources inscrits dans le css
-								$this->getRessourcesUrl($sContentCss, $res_url,$url, $this->dir, $tabRessources);
+								$this->getRessourcesUrl($sContentCss, $res_url,$url, $this->directory, $tabRessources);
 								
-								$tabCss[] = $this->dir."/css/".$file;
+								$tabCss[] = $this->directory."/css/".$file;
 							
-								file_put_contents($this->dir."/css/".$file,$sContentCss );
+								file_put_contents($this->directory."/css/".$file,$sContentCss );
 							}
 						}
 					}
@@ -161,7 +172,7 @@ class Dumper{
 	public function dumpJs($protocol, $domain, &$sContent){
 		//On recopie tous les js du site dans js (sans sous repertoire pour l optimisation)				
 		$oHelper = new Helper();
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		$dom = $this->dom;
 		$tabJs = array();
 		$tabReplace = array();
@@ -199,7 +210,7 @@ class Dumper{
 							
 							//On ne remplace lurl de la ressource qu une fois
 							if (!in_array($res_url, $tabReplace)){
-								$sContent = str_replace($res_url,getenv("APP_URL")."/".$this->dir."/js/".$file,$sContent);
+								$sContent = str_replace($res_url,getenv("APP_URL")."/".$this->directory."/js/".$file,$sContent);
 								$tabReplace[]= $res_url;
 							}							
 							
@@ -208,9 +219,9 @@ class Dumper{
 								$true_url = $protocol .$domain.$true_url;
 							}
 							
-							$tabJs[] = $this->dir."/js/".$file;
-							if (!file_exists($this->dir."/js/".$file)){
-								file_put_contents($this->dir."/js/".$file,$oHelper->getContent($true_url));
+							$tabJs[] = $this->directory."/js/".$file;
+							if (!file_exists($this->directory."/js/".$file)){
+								file_put_contents($this->directory."/js/".$file,$oHelper->getContent($true_url));
 							}
 						}
 					}
@@ -227,7 +238,7 @@ class Dumper{
 	@TODO
 	*/	
 	public function moveScriptToExternalFile(){
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		fputs($fp,"----Déplacement du code css/js ".date("Y-m-d H:i:s")."\n");
 		fclose($fp);
 		
@@ -249,7 +260,7 @@ class Dumper{
 			}
 		}
 		*/
-		file_put_contents($this->dir."/js/__alljs__code.js",$sAllScripts);
+		file_put_contents($this->directory."/js/__alljs__code.js",$sAllScripts);
 		
 		
 		
@@ -264,10 +275,10 @@ class Dumper{
 		}
 		
 		*/
-		file_put_contents($this->dir."/css/__allcss__code.css",$sAllCss);		
-		file_put_contents($this->dir."/index.html", $dom->outertext);		
+		file_put_contents($this->directory."/css/__allcss__code.css",$sAllCss);
+		file_put_contents($this->directory."/index.html", $dom->outertext);
 		
-		$fp = fopen($this->dir."/log.txt","a+");
+		$fp = fopen($this->directory."/log.txt","a+");
 		fputs($fp,"----Déplacement du code css/js: OK ".date("Y-m-d H:i:s")."\n");
 		fclose($fp);
 		
@@ -380,4 +391,3 @@ class Dumper{
 	}
 
 }
-?>
