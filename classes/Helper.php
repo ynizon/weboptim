@@ -204,11 +204,59 @@ class Helper
                 $r = 'Pb Google: '.$json['error']['errors']['message'];
             } else {
                 if (isset($s['lighthouseResult']['audits']['render-blocking-resources']['score'])) {
-                    $r = $s['lighthouseResult']['audits']['render-blocking-resources']['score'] * 100;
+                    $r = round($s['lighthouseResult']['audits']['render-blocking-resources']['score'] * 100,0);
                 }
             }
         }
 
         return $r;
     }
+	
+	/** Get absolute link for file from source and destination url */
+	public function getLinkFrom($src,$dest){
+	
+		if (stripos($dest,"http:") !== false or stripos($dest,"https:") !== false ){
+			$link = $dest;
+		}else{
+			//La source doit se finir par /
+			if (substr($src,-1) != "/"){
+				$src = dirname($src)."/";
+			}
+			
+			//La source doit commencer par http /
+			if (substr($src,0,2) == "//"){
+				$src = "http:".$src;
+			}
+			
+			//La dest ne doit pas commencer par /
+			if (substr($dest,0,1) == "/"){
+				$dest = substr($dest,1);
+				//Prendre la racine du site
+				$root = $src;
+				$iPos = strpos($src,"/",8);
+				if ($iPos !== false){
+					$root = substr($src,0,$iPos);
+					$src = $root."/";
+				}		
+			}
+			
+			//Remove some parameters
+			$pos = strpos($src, '?');
+			if ($pos !== false) {
+				$src = substr($src, 0, $pos);
+			}
+			$pos = strpos($src, '#');
+			if ($pos !== false) {
+				$src= substr($src, 0, $pos);
+			}
+			$pos = strpos($src, '&');
+			if ($pos !== false) {
+				$src = substr($src, 0, $pos);
+			}
+			
+			$link = $src.$dest;
+		}
+		return $link;
+	}
+
 }

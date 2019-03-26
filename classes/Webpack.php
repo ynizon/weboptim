@@ -20,7 +20,7 @@ class Webpack
     }
 
     /** Creation of the webpack.config.json file */
-    public function createConfig()
+    public function createConfig($iConfig)
     {
         copy('../webpack/index.js', $this->directory.'/index.js');
         copy('../webpack/package.json', $this->directory.'/package.json');
@@ -38,7 +38,7 @@ class Webpack
         }
 
         $fp = fopen($this->directory.'/webpack.config.js', 'w+');
-        $s = file_get_contents('../webpack/webpack.config.js');
+        $s = file_get_contents('../webpack/webpack.config'.$iConfig.'.js');
         $s = str_replace('//@@CSS@@', $list_css, $s);
         $s = str_replace('//@@JS@@', $list_js, $s);
         fwrite($fp, $s);
@@ -53,7 +53,7 @@ class Webpack
         fclose($fp);
 
         $sDir = __DIR__.'/../public/'.$this->directory;
-        $cmd = 'webpack --context '.$sDir.' --config='.$sDir.'/webpack.config.js';
+        $cmd = 'webpack --context '.$sDir.' --config '.$sDir.'/webpack.config.js';
         //echo $cmd;
         $shell = shell_exec($cmd);
 
@@ -67,7 +67,7 @@ class Webpack
         fwrite($fp, '----Webpack execute: OK '.date('Y-m-d H:i:s')."\n");
         fclose($fp);
     }
-
+	
     /** Replace all javasript with a call to bundle.js and
      * Replace all css with a call of bundle.css.
      * to the index.html file */
@@ -75,6 +75,11 @@ class Webpack
     {
         $domain = getenv('APP_URL');
 
+		//Backup the original bundle JS
+		if (file_exists($this->directory."/dist/prebundle.js")){
+			copy($this->directory."/dist/prebundle.js",$this->directory."/dist/bundle.js");
+		}
+		
         //Backup the older (for debug)
         if (getenv('APP_DEBUG') == 'true') {
             $s = $dom->outertext;
@@ -107,11 +112,35 @@ class Webpack
 
         $s = $dom->outertext;
 
-        if (strpos($s, 'dist/bundle.css') === false) {
-            $s = str_ireplace('</head>', "<link rel='stylesheet' href='dist/bundle.css' /></head>", $s);
+        if (strpos($s, 'css/wo_bundle.css') === false) {
+			if (file_exists($this->directory."/dist/bundle.css")){
+				copy($this->directory."/dist/bundle.css",$this->directory."/css/wo_bundle.css");
+			}
+			$sContent = $s;
+			$iPos = strpos($s,"<head",0);
+			if ($iPos !== false){
+				$iPos = strpos($s,">",$iPos+1);
+				$s = substr($sContent,0,$iPos+1);
+				$s .= "<link rel='stylesheet' href='css/wo_bundle.css' />";
+				$s .= substr($sContent,$iPos+1);
+			}
+			//$s = str_ireplace('<head>', "<link rel='stylesheet' href='dist/bundle.css' /></head>", $s);
+		
         }
-        if (strpos($s, 'dist/bundle.js') === false) {
-            $s = str_ireplace('</head>', "<script src='dist/bundle.js'></script></head>", $s);
+        if (strpos($s, 'js/wo_bundle.js') === false) {
+			if (file_exists($this->directory."/dist/bundle.js")){
+				copy($this->directory."/dist/bundle.js",$this->directory."/js/wo_bundle.js");
+			}
+			$sContent = $s;
+			$iPos = strpos($s,"<head",0);
+			if ($iPos !== false){
+				$iPos = strpos($s,">",$iPos+1);
+				$s = substr($sContent,0,$iPos+1);
+				$s .= "<script src='js/wo_bundle.js'></script>";
+				$s .= substr($sContent,$iPos+1);
+			}
+			
+            //$s = str_ireplace('</head>', "<script src='dist/bundle.js'></script></head>", $s);
             //$s = str_ireplace("</body>","<script src='dist/bundle.js'></script></body>",$s);
         }
 

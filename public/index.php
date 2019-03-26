@@ -1,25 +1,6 @@
 <?php
 include_once 'config.php';
 
-/*
-//TEST: TO REMOVE
-$url = "https://fleurdesail.gameandme.fr";
-$oHelper = new Helper();
-$res_url = "https://www.atlasformen.fr/style/homepage.group.css?v=QvO3TVxgv5RJs1GUPhnBVzMq7mvG-WmxzFDF2FtmxCc1";
-$res_url = "https://fleurdesail.gameandme.fr/wp-content/themes/beach/style.css?ver=4.8.9";
-$sDir .= "httpsfleurdesailgameandmefr";
-$oDumper = new Dumper($sDir, "");
-
-$sContentCss = $oHelper->getContent($res_url);
-//echo "<hr/>".$res_url;
-//$tabRessourcesCSS = array();
-
-//Recupere les ressources inscrits dans le css
-$x =  array();
-$oDumper->getRessourcesUrl($sContentCss, $res_url,$url, $sDir,$x);
-exit();
-*/
-
 //Init folder fot the website
 if (!is_dir($sDir)) {
     mkdir($sDir);
@@ -58,6 +39,16 @@ foreach ($folders as $folder) {
 if (isset($_GET['remove'])) {
     header('location: index.php?url='.$_GET['url']);
     exit();
+}
+
+
+//Get url from parameter (for download)
+$url_source = "";
+$url_dest = "";
+if (isset($_GET['url'])){
+	$url_dest = $_GET['url']; 	
+	$website = $oHelper->clean($url_dest);
+    $url_source = getenv("APP_URL")."/".$sDir.'/'.$website;
 }
 
 ?>
@@ -101,7 +92,7 @@ if (isset($_GET['remove'])) {
 		<div class="col-md-10 col-lg-8 col-xl-7 mx-auto">          
 			<div class="form-row">
 				  <div class="col-12 col-md-9 mb-2 mb-md-0">                
-						<input style="width:90%;display:inline;padding:1.4rem;" required class="form-control" type="text" id="url" name="url" value="" placeholder="https://www.votre-site.com" />
+						<input style="width:90%;display:inline;padding:1.4rem;" required class="form-control" type="text" id="url" name="url" value="<?php echo $url_dest;?>" placeholder="https://www.votre-site.com" />
 				  </div>
 				  <div class="col-12 col-md-3">
 					<script>
@@ -196,7 +187,11 @@ if (isset($_GET['remove'])) {
 						<br/>
 						Ces résultats sont des pistes de réflexion. Il se peut que le code source ai mal été intérprété par l'outil, et que le site ne s'affiche pas à 100% comme il devrait.
 						<br/><a href='#' id="url_serveur" target="_blank">Voir le code optimisé</a> / <a href='#' id="url_serveur-nowebpack" target="_blank">(sans webpack).</a><br/>
-						<a id="remove_url_serveur" href='#'>Cliquez ici pour forcer un recalcul.</a>
+						<a id="remove_url_serveur" href='#'>Cliquez ici pour forcer un recalcul.</a><br/><br/>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dlModal">
+						  Télécharger l'optimisation pour votre site
+						</button>
+
 					</div>
 				</div>
 			</div>
@@ -206,6 +201,31 @@ if (isset($_GET['remove'])) {
     </div>
   </section>
 
+	<div class="modal fade" id="dlModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Téléchargement des optimisations</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<label for="url_source">Url Source</label>
+			<input type="hidden" name="url_origin" id="url_origin" value="<?php echo $url_dest;?>"/>
+			<input type="text" class="form-control" name="url_source" id="url_source" value="<?php echo $url_source;?>"/>
+			<label for="url_source">Url finale (ou seront stockés les fichiers)</label>
+			<input type="text" class="form-control" name="url_dest" id="url_dest" value="<?php echo $url_dest;?>" />
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="download()">Télécharger</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  
+  
   <!-- Footer -->
   <footer class="footer bg-light">
     <div class="container">
@@ -225,6 +245,20 @@ if (isset($_GET['remove'])) {
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <script >
+		function download(){
+			$.ajax({
+				type: "POST",
+				timeout: 600000,
+				url: '<?php echo getenv('APP_URL'); ?>/download.php',
+				data: 'url='+$("#url_origin").val()+"&url_source="+$("#url_source").val()+"&url_dest="+$("#url_dest").val(),
+				success: function (data) {
+					if (data != ""){
+						window.location.href=(data);	
+					}					
+				}
+			});
+		}
+		
 		function initUrl(){
 			if ($('#info').css('display') == 'none'){	
 				$("#result").hide();
@@ -302,7 +336,6 @@ if (isset($_GET['remove'])) {
 		<?php
         if (isset($_GET['url'])) {
             ?>
-			$("#url").val('<?php echo $_GET['url']; ?>');
 			initUrl();
 			<?php
         }

@@ -109,9 +109,9 @@ class Dumper
         $tabReplace = [];
         $elems = $dom->find('link');
         foreach ($elems as $elem) {
-            if ($elem->getAttribute('rel') == 'stylesheet') {
-                if (stripos($elem->getAttribute('href'), $domain) !== false or substr($elem->getAttribute('href'), 0, 1) == '/') {
-                    $res_url = $elem->getAttribute('href');
+            if ($elem->getAttribute('rel') == 'stylesheet' and $elem->getAttribute("media") != "print") {
+                if (stripos($elem->getAttribute('href'), $domain) !== false or substr($elem->getAttribute('href'), 0, 1) == '/') {                    
+					$res_url = $elem->getAttribute('href');
                     fwrite($fp, $res_url."\n");
 
                     if (substr($res_url, 0, 2) != '//' and $res_url != '') {
@@ -285,6 +285,25 @@ class Dumper
         }
 
         */
+		
+		//Copy all import at the beginning of the new file
+		$sAllImportCss = "";
+		$files = scandir($this->directory."/css");
+		foreach ($files as $file){
+			if ($file != "." and $file != ".." and $file != "__allcss__import.css" and $file != "__allcss__code.css" and $file != "import"){
+				$fpcss = fopen($this->directory."/css/".$file,"r");
+				while (!feof($fpcss)){
+					$buffer = str_replace("\r","",str_replace("\n","",fgets($fpcss)));
+
+					if (stripos($buffer,"@import") !== false){
+						$sAllImportCss.= $buffer."\r\n";
+					}
+				}
+				fclose($fpcss);
+			}
+		}
+		
+		file_put_contents($this->directory.'/css/__allcss__import.css', $sAllImportCss);		
         file_put_contents($this->directory.'/css/__allcss__code.css', $sAllCss);
         file_put_contents($this->directory.'/index.html', $dom->outertext);
 
@@ -319,82 +338,89 @@ class Dumper
             }
             $pos = strpos($sContentCss, ')', $iPosUrl);
 
-            $sImportUrl = trim(substr($sContentCss, $iPosUrl, $pos - $iPosUrl - $iAjust));
+            $dest = trim(substr($sContentCss, $iPosUrl, $pos - $iPosUrl - $iAjust));
+			
+			if ($dest != ""){
+				$oHelper = new Helper();
+				$sOrigineImportUrl = $dest;
+				if ($res_url != ""){
+					$sImportUrl = $oHelper->getLinkFrom($res_url,$dest);
+				}else{
+					$sImportUrl = $oHelper->getLinkFrom($url,$dest);
+				}
+				
+				if (substr($sImportUrl, 0, 2) != '//' and $sImportUrl != '' and stripos($sImportUrl, 'data:image') === false) {
+					$fileCss = urldecode(basename($sImportUrl));
 
-            if (substr($sImportUrl, 0, 2) != '//' and $sImportUrl != '' and stripos($sImportUrl, 'data:image') === false) {
-                $sOrigineImportUrl = $sImportUrl;
+					if (strpos(strtolower($fileCss), '.php') === false) {
+						//Au cas ou le nom possede une variable
+						$pos = strpos($fileCss, '?');
+						if ($pos !== false) {
+							$fileCss = substr($fileCss, 0, $pos);
+						}
+						$pos = strpos($fileCss, '#');
+						if ($pos !== false) {
+							$fileCss = substr($fileCss, 0, $pos);
+						}
+						$pos = strpos($fileCss, '&');
+						if ($pos !== false) {
+							$fileCss = substr($fileCss, 0, $pos);
+						}
 
-                $sImportUrl2 = $sImportUrl;
-                if (substr($sImportUrl, 0, 2) == '..') {
-                    $sImportUrl = dirname($res_url).'/'.$sImportUrl;
-                } else {
-                    if (substr($sImportUrl, 0, 4) != 'http') {
-                        $sImportUrl = $url.'/'.$sImportUrl;
-                    }
-                }
-                if (substr($sImportUrl, 0, 1) == '/') {
-                    $sImportUrl = $url.$sImportUrl;
-                }
+						//echo $sOrigineImportUrl."---->".getenv("APP_URL")."/".$sDir."/css/import/".$fileCss;
+						$sContentCssImp = $oHelper->getContent($sImportUrl);
+						
+						//echo $sBackgroundUrl.$sOrigineImportUrl;exit();
+						$sContentCss = str_replace($sBackgroundUrl.$sOrigineImportUrl, $sBackgroundUrl.getenv('APP_URL').'/'.$sDir.'/css/import/'.$fileCss, $sContentCss);
+						//echo $sContentCss;exit();
+						//echo "x".$sOrigineImportUrl."x<br/>\n";
 
-                $fileCss = urldecode(basename($sImportUrl));
-
-                if (strpos(strtolower($fileCss), '.php') === false) {
-                    //Au cas ou le nom possede une variable
-                    $pos = strpos($fileCss, '?');
-                    if ($pos !== false) {
-                        $fileCss = substr($fileCss, 0, $pos);
-                    }
-                    $pos = strpos($fileCss, '#');
-                    if ($pos !== false) {
-                        $fileCss = substr($fileCss, 0, $pos);
-                    }
-                    $pos = strpos($fileCss, '&');
-                    if ($pos !== false) {
-                        $fileCss = substr($fileCss, 0, $pos);
-                    }
-
-                    //echo $sOrigineImportUrl."---->".getenv("APP_URL")."/".$sDir."/css/import/".$fileCss;
-                    $sContentCssImp = $oHelper->getContent($sImportUrl);
-                    if ($sContentCssImp == '') {
-                        //We try another path
-                        if (substr($sImportUrl2, 0, 2) == '..') {
-                            $sImportUrl2 = dirname($res_url).'/'.$sImportUrl2;
-                        } else {
-                            if (substr($sImportUrl2, 0, 4) != 'http') {
-                                $sImportUrl2 = dirname($res_url).'/'.$sImportUrl2;
-                            }
-                        }
-                        if (substr($sImportUrl2, 0, 1) == '/') {
-                            $sImportUrl2 = dirname($res_url).$sImportUrl2;
-                        }
-                        $sContentCssImp = $oHelper->getContent($sImportUrl2);
-                    }
-                    //echo $sBackgroundUrl.$sOrigineImportUrl;exit();
-                    $sContentCss = str_replace($sBackgroundUrl.$sOrigineImportUrl, $sBackgroundUrl.getenv('APP_URL').'/'.$sDir.'/css/import/'.$fileCss, $sContentCss);
-                    //echo $sContentCss;exit();
-                    //echo "x".$sOrigineImportUrl."x<br/>\n";
-
-                    //echo $sDir."/css/".$fileCss."<br/>";
-                    if (!file_exists($sDir.'/css/import/'.$fileCss)) {
-                        $sExt = strtolower(substr($fileCss, -3));
-                        switch ($sExt) {
-                            case 'jpg':
-                                $tabRessources['imagesjpg'][] = $sDir.'/css/import/'.$fileCss;
-                                break;
-                            case 'gif':
-                            case 'png':
-                                $tabRessources['images'][] = $sDir.'/css/import/'.$fileCss;
-                                break;
-                            case 'css':
-                                break;
-                        }
-
-                        file_put_contents($sDir.'/css/import/'.$fileCss, $sContentCssImp);
-                    }
-                }
-            }
-
-            $iPosUrl = strpos($sContentCss, 'url(', $iPosUrl + 1);
+						if (!file_exists($sDir.'/css/import/'.$fileCss)) {						
+							$bOk = false;
+							$sExt = strtolower(substr($fileCss, -3));
+							switch ($sExt) {
+								case 'jpg':
+									$tabRessources['imagesjpg'][] = $sDir.'/css/import/'.$fileCss;
+									$bOk = true;
+									break;
+								case 'gif':
+								case 'png':
+									$tabRessources['images'][] = $sDir.'/css/import/'.$fileCss;
+									$bOk = true;
+									break;
+								case 'css':
+								case 'eot':
+								case 'ttf':
+								case 'woff':
+								case 'woff2':
+								case 'svg':
+								case 'cur':
+									$bOk = true;
+									break;
+							}
+							
+							//No download php code or something like (security)
+							if ($bOk){
+								if ($sContentCssImp == ""){
+									$fpx = fopen("failed.log","a+");
+									fputs($fpx,"From ".$url ." and ".$dest."\r\n");
+									fputs($fpx,"To" .$sImportUrl."\r\n");
+									fputs($fpx,"--------------\r\n");
+									fclose($fpx);
+								}else{
+									file_put_contents($sDir.'/css/import/'.$fileCss, $sContentCssImp);	
+								}
+								//echo $sContentCssImp.$sDir."/css/import/".$fileCss."<br/>";
+								
+								
+							}
+							
+							
+						}
+					}
+				}
+			}
+			$iPosUrl = strpos($sContentCss, 'url(', $iPosUrl + 1);
         }
     }
 }

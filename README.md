@@ -40,11 +40,11 @@ Note: You need public web server to have the result of the pagespeed optimizatio
 
 Lastly, we need add dependancies. 
 
-To install 
+To install (you can install dependancies globally (with -g) then link to the project with npm link dependancy_file)
 
 ```bash
 npm audit fix --force
-npm install -g path webpack@latest webpack-dev-server@latest webpack-cli webpack-merge-and-include-globally
+npm install -g path webpack@latest webpack-dev-server@latest webpack-cli webpack-merge-and-include-globally uglifyjs-webpack-plugin mini-css-extract-plugin css-loader
 npm install gulp -g
 npm install --save-dev optimize-css-assets-webpack-plugin
 npm install -g gulp-imagemin imagemin-guetzli gulp-plumber yargs gulp-uglify

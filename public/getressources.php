@@ -98,7 +98,7 @@ if (isset($_POST['url'])) {
             $size = $oHelper->format_calc_size($oHelper->calc_size($sDir));
             file_put_contents($sDir.'/size.txt', $size);
         } else {
-            $tabRessources = json_decode(file_get_contents($sDir.'/ressources.txt'), true);
+			$tabRessources = json_decode(file_get_contents($sDir.'/ressources.txt'), true);
             if (!file_exists($sDir.'/webpack.config.js')) {
                 //Webpack optimization (dump all css/js content to a new file)
                 $dom = MyHtmlDomParser::file_get_html($sDir.'/index.html');
@@ -106,8 +106,12 @@ if (isset($_POST['url'])) {
                 $oDumper->moveScriptToExternalFile();
 
                 //Reload DOM and add Webpack bundle (CSS/JS)
-                $oWebpack->createConfig();
+                $oWebpack->createConfig(1);
                 $oWebpack->launch();
+				
+				$oWebpack->createConfig(2);
+                $oWebpack->launch();
+				
                 $dom = MyHtmlDomParser::file_get_html($sDir.'/index.html');
 
                 if ($oWebpack->error == false) {
