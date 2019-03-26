@@ -36,7 +36,7 @@ module.exports = {
 		'prebundle.js': code => require("uglify-js").minify(code).code
 	  }
     }),
-  ],
+  ]/*,
   optimization: {
     minimize: true,
 	minimizer: [
@@ -47,5 +47,5 @@ module.exports = {
       }),
       new OptimizeCssAssetsPlugin({})
     ]
-  }
+  }*/
 };
