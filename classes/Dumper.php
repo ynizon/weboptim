@@ -192,7 +192,7 @@ class Dumper
                     if (substr($res_url, 0, 2) != '//' and $res_url != '') {
                         $file = $oHelper->getDirToString($res_url);
 
-                        if (strpos(strtolower($file), '.php') === false) {
+                        if (stripos($file, '.php') === false) {
                             //Au cas ou le nom possede une variable
                             $pos = strpos($file, '?');
                             if ($pos !== false) {

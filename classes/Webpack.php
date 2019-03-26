@@ -90,7 +90,7 @@ class Webpack
         $elems = $dom->find('script');
         foreach ($elems as $elem) {
             if ($elem->getAttribute('async') == '' and $elem->getAttribute('defer') == '' and ($elem->getAttribute('type') == '' or $elem->getAttribute('type') == 'text/javascript')) {
-                if ($elem->getAttribute('src') != '' and substr($elem->getAttribute('src'), 0, 2) != '//') {
+                if ($elem->getAttribute('src') != '' and substr($elem->getAttribute('src'), 0, 2) != '//' and stripos($elem->getAttribute('src'), 'lazy') === false) {
                     if (stripos($elem->getAttribute('src'), $domain) !== false or substr($elem->getAttribute('src'), 0, 1) == '/') {
                         $elem->src = '';
                     }
